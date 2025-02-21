@@ -1,0 +1,72 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-added-large-files
+      - id: pretty-format-json
+        types: [json]
+        exclude_types: [jupyter]
+        args: [--no-sort-keys, --autofix]
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.13.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+  - repo: https://github.com/lyz-code/yamlfix
+    rev: 1.16.0
+    hooks:
+      - id: yamlfix
+        additional_dependencies: [maison<2.0.0]
+        types: [yaml]
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        entry: isort
+        language: system
+        stages: [pre-commit]
+        types: [python]
+        args:
+          - --line-length=120
+          - --use-parentheses
+          - --trailing-comma
+          - --multi-line=3
+      - id: ruff
+        name: ruff
+        entry: ruff check
+        language: system
+        stages: [pre-commit]
+        types: [python]
+        args: [--fix, --exit-non-zero-on-fix, --line-length=120]
+      - id: nbstripout
+        name: nbstripout
+        entry: nbstripout
+        language: python
+        types: [jupyter]
+        stages: [pre-commit]
+      - id: nbqa-black
+        name: nbqa-black
+        entry: nbqa black
+        language: python
+        types: [jupyter]
+        stages: [pre-commit]
+      - id: bandit
+        name: bandit
+        entry: bandit
+        language: python
+        types: [python]
+        stages: [pre-commit]
+        args: [-ll, -s]
+      - id: mypy
+        name: mypy
+        entry: mypy
+        language: system
+        types: [python]
+        pass_filenames: false
+        stages: [pre-commit]
+        args: [.]
